@@ -1,6 +1,6 @@
-var nakakura = {};
+var DataMapper = {};
 
-(function (nakakura) { "use strict";
+(function (DataMapper) { "use strict";
 var $estr = function() { return js.Boot.__string_rec(this,''); };
 var HxOverrides = function() { }
 HxOverrides.__name__ = true;
@@ -691,14 +691,6 @@ var Enum = { };
 if(typeof(JSON) != "undefined") haxe.Json = JSON;
 js.Browser.window = typeof window != "undefined" ? window : null;
 
-nakakura.Adapter = models.Adapter;
-})(nakakura);
+DataMapper.Adapter = models.Adapter;
+})(DataMapper);
 
-
-//呼び出しサンプル
-window.onload = function(e) {
-	var adapter = new nakakura.Adapter();
-	adapter.set_callback(function(item) {
-		console.log(item);
-	});
-};
