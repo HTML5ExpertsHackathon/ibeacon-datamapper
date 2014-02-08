@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Ubipen Web</title>
+  <script type="text/javascript" src="./jquery-2.0.3.min.js"></script>
+  <script type="text/javascript" src="./main.js"></script>
+</head>
+<body>
+ <div id="haxe:trace"></div>
+ <input type="button" id="red-button" value="red">
+ <input type="button" id="green-button" value="green">
+ <input type="button" id="blue-button" value="blue">
+ <input type="button" id="black-button" value="black">
+ <div id="chat_output"></div>
+ <div id="canvasArea" style="float:left;">
+  <canvas id="image-layer"width="800" height="800" s style="position: absolute; z-index: 0">
+  </canvas>
+  <canvas id="background-layer" width="800" height="800" style="position: absolute; z-index: 1">
+  </canvas>
+  <canvas id="foreground-layer"width="800" height="800" s style="position: absolute; z-index: 2">
+  </canvas>
+</div>
+</body>
+</html>
