@@ -32,8 +32,7 @@ class MainController{
                 var array = [];
                 for(key in _personMap.keys()){
                     var person = cast(_personMap.get(key), Person);
-                    var data = person.jsObject();
-                    if(data != null) array.push(person.jsObject());
+                    array.push(person.jsObject());
                 }
 
                 if(callback != null) callback(array);

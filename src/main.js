@@ -1,4 +1,6 @@
-(function () { "use strict";
+var nakakura = {};
+
+(function (nakakura) { "use strict";
 var $estr = function() { return js.Boot.__string_rec(this,''); };
 var HxOverrides = function() { }
 HxOverrides.__name__ = true;
@@ -46,12 +48,7 @@ var Main = function() {
 };
 Main.__name__ = true;
 Main.main = function() {
-	js.Browser.window.onload = function(e) {
-		console.log(e);
-		var adapter = new models.Adapter();
-		adapter.set_callback(function(item) {
-		});
-	};
+
 }
 Main.prototype = {
 	__class__: Main
@@ -339,7 +336,7 @@ haxe.Timer.delay = function(f,time_ms) {
 }
 haxe.Timer.prototype = {
 	run: function() {
-		console.log("run");
+
 	}
 	,stop: function() {
 		if(this.id == null) return;
@@ -514,7 +511,6 @@ models.Adapter.__name__ = true;
 models.Adapter.prototype = {
 	set_callback: function(callback) {
 		this.callback = callback;
-		console.log(this._mainController);
 		this._mainController.callback = this.get_callback();
 		return callback;
 	}
@@ -558,41 +554,33 @@ models.BeaconData.prototype = {
 		return this.proximity;
 	}
 	,jsObject: function() {
-		try {
-			var rangeString = (function($this) {
+		var rangeString = (function($this) {
+			var $r;
+			var _g = $this.get_proximity();
+			$r = (function($this) {
 				var $r;
-				var _g = $this.get_proximity();
-				$r = (function($this) {
-					var $r;
-					switch( (_g)[1] ) {
-					case 0:
-						$r = "immediate";
-						break;
-					case 1:
-						$r = "near";
-						break;
-					case 2:
-						$r = "far";
-						break;
-					case 3:
-						$r = "unknown";
-						break;
-					case 4:
-						$r = "lost";
-						break;
-					}
-					return $r;
-				}($this));
+				switch( (_g)[1] ) {
+				case 0:
+					$r = "immediate";
+					break;
+				case 1:
+					$r = "near";
+					break;
+				case 2:
+					$r = "far";
+					break;
+				case 3:
+					$r = "unknown";
+					break;
+				case 4:
+					$r = "lost";
+					break;
+				}
 				return $r;
-			}(this));
-			return { uuid : this.uuid, proximity : rangeString, major : this.major, minor : this.minor, accuracy : this.accuracy, rssi : this.rssi};
-		} catch( msg ) {
-			if( js.Boot.__instanceof(msg,String) ) {
-				console.log(msg);
-				throw "catch error in beacondata";
-			} else throw(msg);
-		}
-		return null;
+			}($this));
+			return $r;
+		}(this));
+		return { uuid : this.uuid, proximity : rangeString, major : this.major, minor : this.minor, accuracy : this.accuracy, rssi : this.rssi};
 	}
 	,__class__: models.BeaconData
 }
@@ -608,25 +596,16 @@ models.Person.prototype = {
 		return range;
 	}
 	,jsObject: function() {
-		try {
-			if(Lambda.count(this._beaconMap) == 0) return { };
-			var array = [];
-			var $it0 = this._beaconMap.keys();
-			while( $it0.hasNext() ) {
-				var key = $it0.next();
-				var beacon = this._beaconMap.get(key);
-				if(beacon.get_proximity() == models.Proximity.Lost) this._beaconMap.remove(key);
-				var obj = beacon.jsObject();
-				if(obj != null) array.push(beacon.jsObject());
-			}
-			return { id : this._id, data : array};
-		} catch( msg ) {
-			if( js.Boot.__instanceof(msg,String) ) {
-				console.log("catch error in person");
-				console.log(this._id);
-			} else throw(msg);
+		if(Lambda.count(this._beaconMap) == 0) return { };
+		var array = [];
+		var $it0 = this._beaconMap.keys();
+		while( $it0.hasNext() ) {
+			var key = $it0.next();
+			var beacon = this._beaconMap.get(key);
+			if(beacon.get_proximity() == models.Proximity.Lost) this._beaconMap.remove(key);
+			array.push(beacon.jsObject());
 		}
-		return null;
+		return { id : this._id, data : array};
 	}
 	,setBeacon: function(beaconObj) {
 		try {
@@ -684,11 +663,11 @@ models.SocketManager.prototype = {
 		var _g = this;
 		this._eventSource = new EventSource(url);
 		this._eventSource.onmessage = function(e) {
-			console.log(e.data);
 			var _g1 = 0, _g2 = _g._listeners;
 			while(_g1 < _g2.length) {
 				var listener = _g2[_g1];
 				++_g1;
+				listener(e.data);
 			}
 		};
 	}
@@ -711,7 +690,15 @@ var Class = { __name__ : ["Class"]};
 var Enum = { };
 if(typeof(JSON) != "undefined") haxe.Json = JSON;
 js.Browser.window = typeof window != "undefined" ? window : null;
-Main.main();
-})();
 
-//@ sourceMappingURL=main.js.map
+nakakura.Adapter = models.Adapter;
+})(nakakura);
+
+
+//以下大津谷さんの呼び出しサンプル
+window.onload = function(e) {
+	var adapter = new nakakura.Adapter();
+	adapter.set_callback(function(item) {
+		console.log(item);
+	});
+};

@@ -35,23 +35,15 @@ class Person{
     }
 
     public function jsObject(): Dynamic{
-        try{
-            if(Lambda.count(_beaconMap) == 0) return {};
-            var array = [];
-            for(key in _beaconMap.keys()){
-                var beacon: BeaconData = _beaconMap.get(key);
-                if(beacon.proximity == Proximity.Lost) _beaconMap.remove(key);
-                var obj = beacon.jsObject();
-                if(obj != null) array.push(beacon.jsObject());
-            }
-
-            return {id: _id, data: array};
-        } catch(msg: String){
-            trace("catch error in person");
-            trace(_id);
+        if(Lambda.count(_beaconMap) == 0) return {};
+        var array = [];
+        for(key in _beaconMap.keys()){
+            var beacon: BeaconData = _beaconMap.get(key);
+            if(beacon.proximity == Proximity.Lost) _beaconMap.remove(key);
+            array.push(beacon.jsObject());
         }
 
-        return null;
+        return {id: _id, data: array};
     }
 
     private function _getProximity(proxi: String): Proximity{
