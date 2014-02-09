@@ -1,6 +1,4 @@
-var DataMapper = {};
-
-(function (DataMapper) { "use strict";
+(function () { "use strict";
 var $estr = function() { return js.Boot.__string_rec(this,''); };
 var HxOverrides = function() { }
 HxOverrides.__name__ = true;
@@ -714,7 +712,7 @@ var Class = { __name__ : ["Class"]};
 var Enum = { };
 if(typeof(JSON) != "undefined") haxe.Json = JSON;
 js.Browser.window = typeof window != "undefined" ? window : null;
+Main.main();
+})();
 
-DataMapper.Adapter = models.Adapter;
-})(DataMapper);
-
+//@ sourceMappingURL=main.js.map

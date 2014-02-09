@@ -21,14 +21,21 @@ class BeaconData{
     }
 
     public function jsObject(): Dynamic{
-        var rangeString = switch(proximity){
-            case Proximity.Immediate: "immediate";
-            case Proximity.Near: "near";
-            case Proximity.Far: "far";
-            case Proximity.Unknown: "unknown";
-            case Proximity.Lost: "lost";
+        try{
+            var rangeString = switch(proximity){
+                case Proximity.Immediate: "immediate";
+                case Proximity.Near: "near";
+                case Proximity.Far: "far";
+                case Proximity.Unknown: "unknown";
+                case Proximity.Lost: "lost";
+            }
+            return {uuid: uuid, proximity: rangeString, major: major, minor: minor, accuracy: accuracy, rssi: rssi};
+        } catch(msg: String){
+            trace(msg);
+            throw "catch error in beacondata";
         }
-        return {uuid: uuid, proximity: rangeString, major: major, minor: minor, accuracy: accuracy, rssi: rssi};
+
+        return null;
     }
 
     public function get_proximity(): Proximity{

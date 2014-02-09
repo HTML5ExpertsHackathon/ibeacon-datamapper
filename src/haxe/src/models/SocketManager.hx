@@ -15,8 +15,8 @@ class SocketManager{
     private function _startRecieving(url: String){
         _eventSource = new EventSource(url);
         _eventSource.onmessage = function(e: MessageEvent){
+            trace(e.data);
             for(listener in _listeners){
-                listener(e.data);
             }
         }
     }
