@@ -775,7 +775,7 @@ mconsole.Printer.prototype = {
 mconsole.ConsoleView = function() {
 	mconsole.PrinterBase.call(this);
 	this.atBottom = true;
-	this.projectHome = "/Volumes/home/Users/nakakura/Desktop/ibeacon-datamapper/";
+	this.projectHome = "/Volumes/home/Users/nakakura/Desktop/Ubipen/client/src/haxe/";
 	var document = js.Browser.document;
 	this.element = document.createElement("pre");
 	this.element.id = "console";
@@ -1765,40 +1765,33 @@ models.BeaconData.prototype = {
 		return this.proximity;
 	}
 	,jsObject: function() {
-		try {
-			var rangeString = (function($this) {
+		var rangeString = (function($this) {
+			var $r;
+			var _g = $this.get_proximity();
+			$r = (function($this) {
 				var $r;
-				var _g = $this.get_proximity();
-				$r = (function($this) {
-					var $r;
-					switch( (_g)[1] ) {
-					case 0:
-						$r = "immediate";
-						break;
-					case 1:
-						$r = "near";
-						break;
-					case 2:
-						$r = "far";
-						break;
-					case 3:
-						$r = "unknown";
-						break;
-					case 4:
-						$r = "lost";
-						break;
-					}
-					return $r;
-				}($this));
+				switch( (_g)[1] ) {
+				case 0:
+					$r = "immediate";
+					break;
+				case 1:
+					$r = "near";
+					break;
+				case 2:
+					$r = "far";
+					break;
+				case 3:
+					$r = "unknown";
+					break;
+				case 4:
+					$r = "lost";
+					break;
+				}
 				return $r;
-			}(this));
-			return { uuid : this.uuid, proximity : rangeString, major : this.major, minor : this.minor, accuracy : this.accuracy, rssi : this.rssi};
-		} catch( message ) {
-			if( js.Boot.__instanceof(message,String) ) {
-				throw "error in beacondata";
-			} else throw(message);
-		}
-		return null;
+			}($this));
+			return $r;
+		}(this));
+		return { uuid : this.uuid, proximity : rangeString, major : this.major, minor : this.minor, accuracy : this.accuracy, rssi : this.rssi};
 	}
 	,_isUnknown: null
 	,rssi: null
@@ -1821,26 +1814,16 @@ models.Person.prototype = {
 		return range;
 	}
 	,jsObject: function() {
-		try {
-			if(Lambda.count(this._beaconMap) == 0) return { };
-			var array = [];
-			var $it0 = this._beaconMap.keys();
-			while( $it0.hasNext() ) {
-				var key = $it0.next();
-				var beacon = this._beaconMap.get(key);
-				if(beacon.get_proximity() == models.Proximity.Lost) this._beaconMap.remove(key);
-				var obj = beacon.jsObject();
-				if(obj != null) array.push(beacon.jsObject());
-			}
-			return { id : this._id, data : array};
-		} catch( message ) {
-			if( js.Boot.__instanceof(message,String) ) {
-				haxe.Log.trace("error in person",{ fileName : "Person.hx", lineNumber : 50, className : "models.Person", methodName : "jsObject"});
-				haxe.Log.trace(message,{ fileName : "Person.hx", lineNumber : 51, className : "models.Person", methodName : "jsObject"});
-				haxe.Log.trace(this._id,{ fileName : "Person.hx", lineNumber : 52, className : "models.Person", methodName : "jsObject"});
-			} else throw(message);
+		if(Lambda.count(this._beaconMap) == 0) return { };
+		var array = [];
+		var $it0 = this._beaconMap.keys();
+		while( $it0.hasNext() ) {
+			var key = $it0.next();
+			var beacon = this._beaconMap.get(key);
+			if(beacon.get_proximity() == models.Proximity.Lost) this._beaconMap.remove(key);
+			array.push(beacon.jsObject());
 		}
-		return null;
+		return { id : this._id, data : array};
 	}
 	,setBeacon: function(beaconObj) {
 		try {

@@ -1,4 +1,6 @@
-(function () { "use strict";
+var nakakura = {};
+
+(function (nakakura) { "use strict";
 var $estr = function() { return js.Boot.__string_rec(this,''); };
 var HxOverrides = function() { }
 HxOverrides.__name__ = true;
@@ -46,14 +48,7 @@ var Main = function() {
 };
 Main.__name__ = true;
 Main.main = function() {
-	js.Browser.window.onload = function(e) {
-		console.log(e);
-		var adapter = new models.Adapter();
-		adapter.set_callback(function(item) {
-			console.log("callback");
-			console.log(item);
-		});
-	};
+
 }
 Main.prototype = {
 	__class__: Main
@@ -104,8 +99,7 @@ controllers.MainController.prototype = {
 					while( $it0.hasNext() ) {
 						var key = $it0.next();
 						var person = js.Boot.__cast(_g._personMap.get(key) , models.Person);
-						var obj = person.jsObject();
-						if(obj != null) array.push(person.jsObject());
+						array.push(person.jsObject());
 					}
 					if(_g.callback != null) _g.callback(array);
 					send1();
@@ -342,7 +336,7 @@ haxe.Timer.delay = function(f,time_ms) {
 }
 haxe.Timer.prototype = {
 	run: function() {
-		console.log("run");
+
 	}
 	,stop: function() {
 		if(this.id == null) return;
@@ -560,40 +554,33 @@ models.BeaconData.prototype = {
 		return this.proximity;
 	}
 	,jsObject: function() {
-		try {
-			var rangeString = (function($this) {
+		var rangeString = (function($this) {
+			var $r;
+			var _g = $this.get_proximity();
+			$r = (function($this) {
 				var $r;
-				var _g = $this.get_proximity();
-				$r = (function($this) {
-					var $r;
-					switch( (_g)[1] ) {
-					case 0:
-						$r = "immediate";
-						break;
-					case 1:
-						$r = "near";
-						break;
-					case 2:
-						$r = "far";
-						break;
-					case 3:
-						$r = "unknown";
-						break;
-					case 4:
-						$r = "lost";
-						break;
-					}
-					return $r;
-				}($this));
+				switch( (_g)[1] ) {
+				case 0:
+					$r = "immediate";
+					break;
+				case 1:
+					$r = "near";
+					break;
+				case 2:
+					$r = "far";
+					break;
+				case 3:
+					$r = "unknown";
+					break;
+				case 4:
+					$r = "lost";
+					break;
+				}
 				return $r;
-			}(this));
-			return { uuid : this.uuid, proximity : rangeString, major : this.major, minor : this.minor, accuracy : this.accuracy, rssi : this.rssi};
-		} catch( message ) {
-			if( js.Boot.__instanceof(message,String) ) {
-				throw "error in beacondata";
-			} else throw(message);
-		}
-		return null;
+			}($this));
+			return $r;
+		}(this));
+		return { uuid : this.uuid, proximity : rangeString, major : this.major, minor : this.minor, accuracy : this.accuracy, rssi : this.rssi};
 	}
 	,__class__: models.BeaconData
 }
@@ -609,26 +596,16 @@ models.Person.prototype = {
 		return range;
 	}
 	,jsObject: function() {
-		try {
-			if(Lambda.count(this._beaconMap) == 0) return { };
-			var array = [];
-			var $it0 = this._beaconMap.keys();
-			while( $it0.hasNext() ) {
-				var key = $it0.next();
-				var beacon = this._beaconMap.get(key);
-				if(beacon.get_proximity() == models.Proximity.Lost) this._beaconMap.remove(key);
-				var obj = beacon.jsObject();
-				if(obj != null) array.push(beacon.jsObject());
-			}
-			return { id : this._id, data : array};
-		} catch( message ) {
-			if( js.Boot.__instanceof(message,String) ) {
-				console.log("error in person");
-				console.log(message);
-				console.log(this._id);
-			} else throw(message);
+		if(Lambda.count(this._beaconMap) == 0) return { };
+		var array = [];
+		var $it0 = this._beaconMap.keys();
+		while( $it0.hasNext() ) {
+			var key = $it0.next();
+			var beacon = this._beaconMap.get(key);
+			if(beacon.get_proximity() == models.Proximity.Lost) this._beaconMap.remove(key);
+			array.push(beacon.jsObject());
 		}
-		return null;
+		return { id : this._id, data : array};
 	}
 	,setBeacon: function(beaconObj) {
 		try {
@@ -713,7 +690,15 @@ var Class = { __name__ : ["Class"]};
 var Enum = { };
 if(typeof(JSON) != "undefined") haxe.Json = JSON;
 js.Browser.window = typeof window != "undefined" ? window : null;
-Main.main();
-})();
 
-//@ sourceMappingURL=main.js.map
+nakakura.Adapter = models.Adapter;
+})(nakakura);
+
+
+//以下大津谷さんの呼び出しサンプル
+window.onload = function(e) {
+	var adapter = new nakakura.Adapter();
+	adapter.set_callback(function(item) {
+		console.log(item);
+	});
+};
