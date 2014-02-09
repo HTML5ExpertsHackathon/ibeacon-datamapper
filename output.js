@@ -99,7 +99,8 @@ controllers.MainController.prototype = {
 					while( $it0.hasNext() ) {
 						var key = $it0.next();
 						var person = js.Boot.__cast(_g._personMap.get(key) , models.Person);
-						array.push(person.jsObject());
+						var obj = person.jsObject();
+						if(obj != null) array.push(person.jsObject());
 					}
 					if(_g.callback != null) _g.callback(array);
 					send1();
@@ -336,7 +337,7 @@ haxe.Timer.delay = function(f,time_ms) {
 }
 haxe.Timer.prototype = {
 	run: function() {
-
+		console.log("run");
 	}
 	,stop: function() {
 		if(this.id == null) return;
@@ -554,33 +555,40 @@ models.BeaconData.prototype = {
 		return this.proximity;
 	}
 	,jsObject: function() {
-		var rangeString = (function($this) {
-			var $r;
-			var _g = $this.get_proximity();
-			$r = (function($this) {
+		try {
+			var rangeString = (function($this) {
 				var $r;
-				switch( (_g)[1] ) {
-				case 0:
-					$r = "immediate";
-					break;
-				case 1:
-					$r = "near";
-					break;
-				case 2:
-					$r = "far";
-					break;
-				case 3:
-					$r = "unknown";
-					break;
-				case 4:
-					$r = "lost";
-					break;
-				}
+				var _g = $this.get_proximity();
+				$r = (function($this) {
+					var $r;
+					switch( (_g)[1] ) {
+					case 0:
+						$r = "immediate";
+						break;
+					case 1:
+						$r = "near";
+						break;
+					case 2:
+						$r = "far";
+						break;
+					case 3:
+						$r = "unknown";
+						break;
+					case 4:
+						$r = "lost";
+						break;
+					}
+					return $r;
+				}($this));
 				return $r;
-			}($this));
-			return $r;
-		}(this));
-		return { uuid : this.uuid, proximity : rangeString, major : this.major, minor : this.minor, accuracy : this.accuracy, rssi : this.rssi};
+			}(this));
+			return { uuid : this.uuid, proximity : rangeString, major : this.major, minor : this.minor, accuracy : this.accuracy, rssi : this.rssi};
+		} catch( message ) {
+			if( js.Boot.__instanceof(message,String) ) {
+				throw "error in beacondata";
+			} else throw(message);
+		}
+		return null;
 	}
 	,__class__: models.BeaconData
 }
@@ -596,16 +604,26 @@ models.Person.prototype = {
 		return range;
 	}
 	,jsObject: function() {
-		if(Lambda.count(this._beaconMap) == 0) return { };
-		var array = [];
-		var $it0 = this._beaconMap.keys();
-		while( $it0.hasNext() ) {
-			var key = $it0.next();
-			var beacon = this._beaconMap.get(key);
-			if(beacon.get_proximity() == models.Proximity.Lost) this._beaconMap.remove(key);
-			array.push(beacon.jsObject());
+		try {
+			if(Lambda.count(this._beaconMap) == 0) return { };
+			var array = [];
+			var $it0 = this._beaconMap.keys();
+			while( $it0.hasNext() ) {
+				var key = $it0.next();
+				var beacon = this._beaconMap.get(key);
+				if(beacon.get_proximity() == models.Proximity.Lost) this._beaconMap.remove(key);
+				var obj = beacon.jsObject();
+				if(obj != null) array.push(beacon.jsObject());
+			}
+			return { id : this._id, data : array};
+		} catch( message ) {
+			if( js.Boot.__instanceof(message,String) ) {
+				console.log("error in person");
+				console.log(message);
+				console.log(this._id);
+			} else throw(message);
 		}
-		return { id : this._id, data : array};
+		return null;
 	}
 	,setBeacon: function(beaconObj) {
 		try {
