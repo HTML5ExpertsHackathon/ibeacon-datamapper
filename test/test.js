@@ -1738,6 +1738,7 @@ models.BeaconData = function(uuid,proximity,major,minor,accuracy,rssi) {
 	this.accuracy = accuracy;
 	this.rssi = rssi;
 	this._isUnknown = false;
+	this.lost = false;
 };
 models.BeaconData.__name__ = ["models","BeaconData"];
 models.BeaconData.prototype = {
@@ -1746,7 +1747,7 @@ models.BeaconData.prototype = {
 		haxe.Timer.delay(function() {
 			if(!_g._isUnknown) return;
 			if(counter > 2) {
-				_g.set_proximity(models.Proximity.Lost);
+				_g.lost = true;
 				return;
 			}
 			_g._checkUnknown(counter + 1);
@@ -1766,7 +1767,7 @@ models.BeaconData.prototype = {
 	}
 	,jsObject: function() {
 		try {
-			var rangeString = (function($this) {
+			var rangeString = this.lost || this.get_proximity() == null?"lost":(function($this) {
 				var $r;
 				var _g = $this.get_proximity();
 				$r = (function($this) {
@@ -1800,6 +1801,7 @@ models.BeaconData.prototype = {
 		}
 		return null;
 	}
+	,lost: null
 	,_isUnknown: null
 	,rssi: null
 	,accuracy: null
@@ -1828,8 +1830,8 @@ models.Person.prototype = {
 			while( $it0.hasNext() ) {
 				var key = $it0.next();
 				var beacon = this._beaconMap.get(key);
-				if(beacon.get_proximity() == models.Proximity.Lost) this._beaconMap.remove(key);
 				var obj = beacon.jsObject();
+				if(beacon.lost || obj.proximity == "lost") this._beaconMap.remove(key);
 				if(obj != null) array.push(beacon.jsObject());
 			}
 			return { id : this._id, data : array};

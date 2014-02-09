@@ -9,6 +9,7 @@ class BeaconData{
     public var accuracy: Float;
     public var rssi: Int;
     private var _isUnknown: Bool;
+    public var lost(default, null): Bool;
 
     public function new(uuid: String, proximity: Proximity, major: Int, minor: Int, accuracy: Float, rssi: Int){
         this.uuid = uuid;
@@ -18,11 +19,12 @@ class BeaconData{
         this.accuracy = accuracy;
         this.rssi = rssi;
         _isUnknown = false;
+        lost = false;
     }
 
     public function jsObject(): Dynamic{
         try{
-            var rangeString = switch(proximity){
+            var rangeString = if(lost || proximity == null) "lost" else switch(proximity){
                 case Proximity.Immediate: "immediate";
                 case Proximity.Near: "near";
                 case Proximity.Far: "far";
@@ -55,7 +57,7 @@ class BeaconData{
         Timer.delay(function(){
             if(!_isUnknown) return;
             if(counter > 2){
-                proximity = Proximity.Lost;
+                lost = true;
                 return;
             }
             _checkUnknown(counter + 1);

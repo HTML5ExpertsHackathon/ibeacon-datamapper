@@ -40,8 +40,8 @@ class Person{
             var array = [];
             for(key in _beaconMap.keys()){
                 var beacon: BeaconData = _beaconMap.get(key);
-                if(beacon.proximity == Proximity.Lost) _beaconMap.remove(key);
                 var obj = beacon.jsObject();
+                if(beacon.lost || obj.proximity == "lost") _beaconMap.remove(key);
                 if(obj != null) array.push(beacon.jsObject());
             }
 

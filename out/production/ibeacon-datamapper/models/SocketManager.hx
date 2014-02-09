@@ -16,6 +16,7 @@ class SocketManager{
         _eventSource = new EventSource(url);
         _eventSource.onmessage = function(e: MessageEvent){
             for(listener in _listeners){
+                trace(e.data);
                 listener(e.data);
             }
         }
